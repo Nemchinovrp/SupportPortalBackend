@@ -1,4 +1,4 @@
-package com.supportportal.exception.domain;
+package com.supportportal.exception;
 
 public class EmailExistException extends Exception {
     public EmailExistException(String message) {

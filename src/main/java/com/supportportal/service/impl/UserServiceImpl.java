@@ -2,9 +2,9 @@ package com.supportportal.service.impl;
 
 import com.supportportal.domain.User;
 import com.supportportal.domain.UserPrincipal;
-import com.supportportal.exception.domain.EmailExistException;
-import com.supportportal.exception.domain.UserNotFoundException;
-import com.supportportal.exception.domain.UsernameExistException;
+import com.supportportal.exception.EmailExistException;
+import com.supportportal.exception.UserNotFoundException;
+import com.supportportal.exception.UsernameExistException;
 import com.supportportal.repository.UserRepository;
 import com.supportportal.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         validateNewUsernameAndEmail(EMPTY, username, email);
         User user = new User();
         user.setUserId(generateUserId());
-        String password = generatePassword();
+        String password = "admin";
         String encodedPassword = encodePassword(password);
         user.setFirstName(firstName);
         user.setLastName(lastName);

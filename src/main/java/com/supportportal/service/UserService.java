@@ -1,9 +1,9 @@
 package com.supportportal.service;
 
 import com.supportportal.domain.User;
-import com.supportportal.exception.domain.EmailExistException;
-import com.supportportal.exception.domain.UserNotFoundException;
-import com.supportportal.exception.domain.UsernameExistException;
+import com.supportportal.exception.EmailExistException;
+import com.supportportal.exception.UserNotFoundException;
+import com.supportportal.exception.UsernameExistException;
 
 import java.util.List;
 

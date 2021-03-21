@@ -1,13 +1,14 @@
-package com.supportportal.resource;
+package com.supportportal.controller;
 
 import com.supportportal.domain.User;
 import com.supportportal.domain.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
-import com.supportportal.exception.domain.EmailExistException;
-import com.supportportal.exception.domain.UserNotFoundException;
-import com.supportportal.exception.domain.UsernameExistException;
+import com.supportportal.exception.EmailExistException;
+import com.supportportal.exception.UserNotFoundException;
+import com.supportportal.exception.UsernameExistException;
 import com.supportportal.service.UserService;
 import com.supportportal.utility.JWTTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -22,18 +23,12 @@ import static com.supportportal.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping(path = { "/", "/user"})
-public class UserResource extends ExceptionHandling {
-    private AuthenticationManager authenticationManager;
-    private UserService userService;
-    private JWTTokenProvider jwtTokenProvider;
-
-    @Autowired
-    public UserResource(AuthenticationManager authenticationManager, UserService userService, JWTTokenProvider jwtTokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+@RequestMapping("/user")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class UserController extends ExceptionHandling {
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final JWTTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user) {
