@@ -7,10 +7,10 @@ import com.supportportal.exception.UserNotFoundException;
 import com.supportportal.exception.UsernameExistException;
 import com.supportportal.repository.UserRepository;
 import com.supportportal.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,33 +27,27 @@ import java.util.List;
 import static com.supportportal.constant.UserImplConstant.*;
 import static com.supportportal.enumeration.Role.ROLE_USER;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-
+@Slf4j
 @Service
 @Transactional
 @Qualifier("userDetailsService")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService, UserDetailsService {
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private UserRepository userRepository;
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username);
         if (user == null) {
-            LOGGER.error(NO_USER_FOUND_BY_USERNAME + username);
+            log.error(NO_USER_FOUND_BY_USERNAME + username);
             throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
         } else {
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
             userRepository.save(user);
             UserPrincipal userPrincipal = new UserPrincipal(user);
-            LOGGER.info(FOUND_USER_BY_USERNAME + username);
+            log.info(FOUND_USER_BY_USERNAME + username);
             return userPrincipal;
         }
     }
@@ -77,7 +71,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setAuthorities(ROLE_USER.getAuthorities());
         user.setProfileImageUrl(getTemporaryProfileImageUrl());
         userRepository.save(user);
-        LOGGER.info("New user password: " + password);
+        log.info("New user password: " + password);
         return user;
     }
 
@@ -112,7 +106,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return RandomStringUtils.randomNumeric(10);
     }
 
-    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
+    private void validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
         User userByNewUsername = findUserByUsername(newUsername);
         User userByNewEmail = findUserByEmail(newEmail);
         if (StringUtils.isNotBlank(currentUsername)) {
@@ -126,7 +120,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
                 throw new EmailExistException(EMAIL_ALREADY_EXISTS);
             }
-            return currentUser;
         } else {
             if (userByNewUsername != null) {
                 throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
@@ -134,8 +127,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             if (userByNewEmail != null) {
                 throw new EmailExistException(EMAIL_ALREADY_EXISTS);
             }
-            return null;
         }
     }
-
 }
