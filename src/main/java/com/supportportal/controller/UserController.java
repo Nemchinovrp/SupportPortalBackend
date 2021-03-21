@@ -2,8 +2,8 @@ package com.supportportal.controller;
 
 import com.supportportal.domain.User;
 import com.supportportal.domain.UserPrincipal;
-import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.EmailExistException;
+import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.UserNotFoundException;
 import com.supportportal.exception.UsernameExistException;
 import com.supportportal.service.UserService;
@@ -14,10 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.supportportal.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.OK;
