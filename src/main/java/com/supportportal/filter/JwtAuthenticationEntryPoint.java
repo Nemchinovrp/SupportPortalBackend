@@ -2,7 +2,6 @@ package com.supportportal.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supportportal.domain.HttpResponse;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.stereotype.Component;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import static com.supportportal.constant.SecurityConstant.FORBIDDEN_MESSAGE;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
