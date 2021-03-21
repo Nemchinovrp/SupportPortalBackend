@@ -6,6 +6,7 @@ import com.supportportal.exception.EmailExistException;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.UserNotFoundException;
 import com.supportportal.exception.UsernameExistException;
+import com.supportportal.service.AuthenticateService;
 import com.supportportal.service.UserService;
 import com.supportportal.utility.JWTTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -25,16 +26,15 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("user")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController extends ExceptionHandling {
-    private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final JWTTokenProvider jwtTokenProvider;
+    private final AuthenticateService authenticateService;
 
     @PostMapping("login")
     public ResponseEntity<User> login(@RequestBody User user) {
-        authenticate(user.getUsername(), user.getPassword());
+        authenticateService.authenticate(user.getUsername(), user.getPassword());
         User loginUser = userService.findUserByUsername(user.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
-        HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
+        HttpHeaders jwtHeader = userService.getJwtHeader(userPrincipal);
         return new ResponseEntity<>(loginUser, jwtHeader, OK);
     }
 
@@ -48,15 +48,5 @@ public class UserController extends ExceptionHandling {
     public ResponseEntity<List<User>> getAllUsers(){
         List<User> users = userService.getUsers();
         return new ResponseEntity<>(users, OK);
-    }
-
-    private HttpHeaders getJwtHeader(UserPrincipal user) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(user));
-        return headers;
-    }
-
-    private void authenticate(String username, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 }

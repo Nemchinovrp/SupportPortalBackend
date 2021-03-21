@@ -7,12 +7,14 @@ import com.supportportal.exception.UserNotFoundException;
 import com.supportportal.exception.UsernameExistException;
 import com.supportportal.repository.UserRepository;
 import com.supportportal.service.UserService;
+import com.supportportal.utility.JWTTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,9 +26,11 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
+import static com.supportportal.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static com.supportportal.constant.UserImplConstant.*;
 import static com.supportportal.enumeration.Role.ROLE_USER;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 @Slf4j
 @Service
 @Transactional
@@ -34,6 +38,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
+    private final JWTTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -128,5 +133,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 throw new EmailExistException(EMAIL_ALREADY_EXISTS);
             }
         }
+    }
+
+    public HttpHeaders getJwtHeader(UserPrincipal user) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(user));
+        return headers;
     }
 }
