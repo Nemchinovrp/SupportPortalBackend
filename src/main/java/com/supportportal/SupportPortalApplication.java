@@ -11,9 +11,4 @@ public class SupportPortalApplication {
     public static void main(String[] args) {
         SpringApplication.run(SupportPortalApplication.class, args);
     }
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
